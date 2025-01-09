@@ -6,7 +6,7 @@ import {Table, Column, Model, DataType} from 'sequelize-typescript'
     underscored: true,
 })
 
-export class Loja extends Model {
+export class Loja extends Model<Loja> {
     @Column({
         type: DataType.STRING,
         allowNull: false,
