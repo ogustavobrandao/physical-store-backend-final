@@ -10,9 +10,7 @@ import { GeoCodeService } from './apis/geocode/geocode.service';
 export class StoreController {
     constructor(
         private readonly storeService: StoreService,     
-        private readonly viacepService: ViaCepService,
-        private readonly orsService: OrsService,
-        private readonly geocodeService: GeoCodeService,) {}
+    ) {}
 
     @Get(':id')
     async storeById(@Param('id', ParseIntPipe) id:number){

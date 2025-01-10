@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { StoreRepository } from './repository/store.repository';
 import { CreateStoreDTO } from './dto/create-store.dto';
+import { GeoCodeService } from './apis/geocode/geocode.service';
+import { ViaCepService } from './apis/viacep/viacep.service';
+import { OrsService } from './apis/ors/ors.service';
 
 @Injectable()
 export class StoreService {
-    constructor(private readonly storeRepository: StoreRepository){}
+    constructor(
+        private readonly storeRepository: StoreRepository,
+        private readonly geocodeService: GeoCodeService,
+        private readonly viacepService: ViaCepService,
+        private readonly orsService: OrsService,
+    ){}
 
     async create(data: CreateStoreDTO) {
         try {
@@ -12,6 +20,42 @@ export class StoreService {
         } catch (error: any) {
             throw new Error('Erro ao criar store');
         }
+    }
+
+    async findByCep(cep){
+
+        const cepInput = await this.geocodeService.obterCoordenadas(cep);
+        const stores = await this.all();
+
+        const storesProximas = (await Promise.all(
+            stores.map(async (element) => {
+                const coordenada = await this.geocodeService.obterCoordenadas(element.postalCode);
+                const distancia = await this.orsService.getDistancia(cepInput, coordenada);
+
+                const {storeName, address1, postalCode, telephoneNumber, emailAddress} = element;
+
+                if(Number(distancia) <= 50){
+                    if(element.type == 'store'){
+
+                    }else{
+            
+                    }
+                }else{
+                    if(element.type == 'store'){
+
+                    }else{
+            
+                    }
+                }
+                return null;
+            })
+        )).filter((store) => store !== null)
+        .sort((storeA, storeB) => storeA!.distancia - storeB!.distancia);
+
+
+
+        
+
     }
 
     async findById(id: number) {
