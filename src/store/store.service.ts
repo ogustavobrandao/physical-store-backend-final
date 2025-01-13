@@ -58,14 +58,14 @@ export class StoreService {
                         },
                         title: element.storeName
                         });
-
+                    
                     if(element.type == 'PDV'){
                         return {
                             'name': element.storeName,
                             'city': element.city,
                             'postalCode': element.postalCode,
                             'type': element.type,
-                            'distance': `${distancia}km`,
+                            'distance': distancia,
                             'value': frete,
                         }
                     }else{
@@ -74,7 +74,7 @@ export class StoreService {
                             'city': element.city,
                             'postalCode': element.postalCode,
                             'type': element.type,
-                            'distance': `${distancia}km`,
+                            'distance': distancia,
                             'value': frete,
                         }
                     }
