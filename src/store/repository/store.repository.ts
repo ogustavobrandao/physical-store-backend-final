@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Store } from '../entity/store.entity';
+import { PaginationDTO } from '../dto/pagination.dto';
 
 @Injectable()
 export class StoreRepository {
   constructor(@InjectModel(Store) private readonly storeModel: typeof Store) {}
 
-  async all(): Promise<Store[]> {
-    return this.storeModel.findAll();
+  async all(limit?: number, offset?: number): Promise<{ rows: Store[], count:number }> {
+    return this.storeModel.findAndCountAll({limit, offset});
   }
 
-  async findByState(state: string): Promise<Store[]> {
-    return this.storeModel.findAll({ where: {state}});
+  async findByCep(limit: number, offset: number){
+
+  }
+
+  async findByState(state: string, limit: number, offset: number): Promise<{ rows: Store[], count:number }> {
+    return this.storeModel.findAndCountAll({ where: {state}, limit, offset});
   }
 
   async findById(id: number): Promise<Store> {

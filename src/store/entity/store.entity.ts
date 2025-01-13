@@ -102,12 +102,14 @@ export class Store extends Model<Store> {
     @Column({
         type: DataType.STRING,
         allowNull: true,
+        unique: true,
     })
     telephoneNumber?: string;
 
     @Column({
         type: DataType.STRING,
         allowNull: true,
+        unique: true,
     })
     emailAddress?: string;
 
