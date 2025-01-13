@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
-import { ViaCepService } from "./viacep/viacep.service";
-import { OrsService } from "./ors/ors.service";
-import { GeoCodeService } from "./geocode/geocode.service";
+import { ViaCepModule } from "./viacep/viacep.module";
+import { OrsModule } from "./ors/ors.module";
+import { GeoCodeModule } from "./geocode/geocode.module";
 
 @Module({
-    imports: [ViaCepService, OrsService, GeoCodeService],
-    exports: [ViaCepService, OrsService, GeoCodeService],
+    imports: [ViaCepModule, OrsModule, GeoCodeModule],
+    exports: [ViaCepModule, OrsModule, GeoCodeModule],
 })
 export class ApiModule{}

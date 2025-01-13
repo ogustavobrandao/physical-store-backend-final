@@ -10,6 +10,10 @@ export class StoreRepository {
     return this.storeModel.findAll();
   }
 
+  async findByState(state: string): Promise<Store[]> {
+    return this.storeModel.findAll({ where: {state}});
+  }
+
   async findById(id: number): Promise<Store> {
     return this.storeModel.findByPk(id);
   }

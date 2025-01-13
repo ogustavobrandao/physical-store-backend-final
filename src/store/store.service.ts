@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { StoreRepository } from './repository/store.repository';
 import { CreateStoreDTO } from './dto/create-store.dto';
-import { GeoCodeService } from './apis/geocode/geocode.service';
 import { ViaCepService } from './apis/viacep/viacep.service';
 import { OrsService } from './apis/ors/ors.service';
+import { GeoCodeService } from './apis/geocode/geocode.service';
 
 @Injectable()
 export class StoreService {
@@ -32,30 +32,38 @@ export class StoreService {
                 const coordenada = await this.geocodeService.obterCoordenadas(element.postalCode);
                 const distancia = await this.orsService.getDistancia(cepInput, coordenada);
 
-                const {storeName, address1, postalCode, telephoneNumber, emailAddress} = element;
-
                 if(Number(distancia) <= 50){
-                    if(element.type == 'store'){
+                    if(element.type == 'PDV'){
 
                     }else{
             
                     }
                 }else{
-                    if(element.type == 'store'){
+                    if(element.type == 'LOJA'){
 
-                    }else{
-            
-                    }
+                    }      
                 }
                 return null;
             })
         )).filter((store) => store !== null)
-        .sort((storeA, storeB) => storeA!.distancia - storeB!.distancia);
+        .sort((storeA, storeB) => storeA!.distancia - storeB!.distancia);  
 
+        return storesProximas
+    }
 
+    async findByState(state: string) {
+        try {
+            const store = await this.storeRepository.findByState(state);
 
-        
+            if(!store){
+                throw new HttpException('Nenhuma loja encontrada', HttpStatus.NOT_FOUND);
+            }
+            
+            return store;
+        } catch (error: any) {
 
+            throw new Error('Erro ao buscar store');
+        }
     }
 
     async findById(id: number) {
@@ -63,7 +71,7 @@ export class StoreService {
             const store = await this.storeRepository.findById(id);
 
             if(!store){
-                throw new Error('Store não encontrada');
+                throw new HttpException('Nenhuma loja encontrada', HttpStatus.NOT_FOUND);
             }
             
             return store;
@@ -78,14 +86,11 @@ export class StoreService {
             const stores = await this.storeRepository.all();
 
             if (stores.length === 0) {
-                throw new Error('Nenhuma store encontrada');
+                throw new HttpException('Nenhuma loja encontrada', HttpStatus.NOT_FOUND);
             }
 
             return stores;
-        } catch (error: any) {
-            if (error instanceof Error) {
-                throw error;
-            }
+        } catch (error) {
 
             throw new Error('Erro ao buscar todas as stores');
         }
@@ -96,13 +101,13 @@ export class StoreService {
             const store = await this.storeRepository.findById(id);
             
             if(!store){
-                throw new Error('Store não encontrada');
+                throw new HttpException('Nenhuma loja encontrada', HttpStatus.NOT_FOUND);
             }
 
             await store.update(data);
 
             return store
-        } catch (error: any) {
+        } catch (error) {
 
             throw new Error('Erro ao atualizar store');
         }
@@ -113,11 +118,12 @@ export class StoreService {
             const store = await this.storeRepository.findById(id);
 
             if(!store){
-                throw new Error('Store não encontrada');
+                throw new HttpException('Nenhuma loja encontrada', HttpStatus.NOT_FOUND);
+
             }
 
             await store.destroy();
-        } catch (error: any) {
+        } catch (error) {
 
             throw new Error('Erro ao deletar store');
         }
